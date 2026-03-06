@@ -331,7 +331,6 @@ Payload:
 - [ ] Collapsed AI message component
 - [ ] Per-conversation preferences UI
 - [ ] Admin AI toggle UI
-
 ## Infra / Ops
 - [ ] Environment variable management
 - [ ] DB migration scripts
