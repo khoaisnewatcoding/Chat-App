@@ -33,6 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# generated prisma client and local backups
+/generated
+bun.lock.root-backup
+
 # vercel
 .vercel
 

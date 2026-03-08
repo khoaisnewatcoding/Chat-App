@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  app:
+    image: oven/bun:1
+    container_name: chatapp-web
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:54322/postgres
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+    command: sh -c "bun install && bunx prisma generate && bun run dev"
