@@ -6,11 +6,19 @@ services:
     container_name: chatapp-web
     working_dir: /app
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:54322/postgres
+      DATABASE_URL: postgresql://postgres:postgres@db.supabase.internal:5432/postgres
       NODE_ENV: development
       PORT: 3000
     ports:
       - "3000:3000"
     volumes:
       - ./web:/app
-    command: sh -c "bun install && bunx prisma generate && bun run dev"
+    networks:
+      - default
+      - supabase
+    command: sh -c "bun install && bunx prisma generate && bunx next dev --webpack"
+
+networks:
+  supabase:
+    external: true
+    name: supabase_network_ChatApp

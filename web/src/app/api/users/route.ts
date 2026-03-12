@@ -6,7 +6,7 @@ type CreateUserBody = {
   displayName?: string;
   avatarUrl?: string | null;
 };
-// fetch
+
 export async function GET() {
   try {
     const users = await prisma.user.findMany({
@@ -29,7 +29,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CreateUserBody;
-    // "?" optional chaining
     const email = body.email?.trim().toLowerCase();
     const displayName = body.displayName?.trim();
     const avatarUrl = body.avatarUrl?.trim() || null;
