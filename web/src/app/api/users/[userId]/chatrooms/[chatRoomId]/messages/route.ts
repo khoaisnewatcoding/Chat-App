@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ChatSenderType } from "@prisma/client";
 import { prisma } from "@/lib/server/prisma";
 import { isUserInChatRoom } from "@/lib/server/chatrooms";
+import { publishToUsers } from "@/lib/server/sse";
 import { allUsersExist } from "@/lib/server/users";
 
 type RouteContext = {
@@ -126,15 +127,41 @@ export async function POST(
       );
     }
 
-    const message = await prisma.chatMessage.create({
+    // Store the message and load room participants in one transaction so broadcast targets match persisted state.
+    const { message, participantUserIds } = await prisma.$transaction(async (tx) => {
+      const createdMessage = await tx.chatMessage.create({
+        data: {
+          chatRoomId,
+          senderType: ChatSenderType.USER,
+          senderUserId: userId,
+          content,
+        },
+        include: {
+          senderUser: true,
+        },
+      });
+
+      const participants = await tx.chatParticipant.findMany({
+        where: {
+          chatRoomId,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      return {
+        message: createdMessage,
+        participantUserIds: participants.map((participant) => participant.userId),
+      };
+    });
+
+    // Push the new message to every currently connected participant in this room.
+    publishToUsers(participantUserIds, {
+      event: "message.created",
       data: {
         chatRoomId,
-        senderType: ChatSenderType.USER,
-        senderUserId: userId,
-        content,
-      },
-      include: {
-        senderUser: true,
+        message,
       },
     });
 
