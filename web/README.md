@@ -18,6 +18,29 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Testing SSE Endpoints
+
+Use the Bun CLI helper to connect to any SSE endpoint and print incoming events:
+
+```bash
+bun run test:sse -- --url http://localhost:3000/api/stream
+```
+
+Current app endpoint:
+
+```bash
+bun run test:sse -- --url http://localhost:3000/api/users/<userId>/events
+```
+
+Useful flags:
+
+- `--header Authorization:Bearer-token`
+- `--method POST`
+- `--body '{"prompt":"hello"}'`
+- `--timeout 30000`
+- `--show-comments`
+- `--raw`
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
